@@ -1,0 +1,76 @@
+---
+
+  - name: Install Python python3-pip
+    become: yes
+    ansible.builtin.apt:
+      name: '{{ item }}'
+      state: present
+    with_items:
+      - python3-pip
+      - python3-kubernetes
+      - python3-jsonpatch
+
+  - name: Install Python packages for Ansible kubernetes.core.k8s module
+    become: yes
+    ansible.builtin.pip:
+      name: PyYAML
+      state: present
+      extra_args: --break-system-packages
+
+  - name: Gathering facts about /etc/apt/keyrings/kubernetes-apt-keyring.gpg existence
+    become: yes
+    ansible.builtin.stat:
+      path: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+    register: register_name
+
+  - name: Download the public signing key for the Kubernetes package repositories
+    become: yes
+    ansible.builtin.get_url:
+      url: https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key
+      dest: /root/kubernetes-release.key
+    when: not register_name.stat.exists
+
+  # not using ansible.builtin.apt-key because apt-key is deprecated -> https://wiki.debian.org/DebianRepository/UseThirdParty
+  # followed this tutorial -> https://www.linuxuprising.com/2021/01/apt-key-is-deprecated-how-to-add.html
+
+  - name: Add the signing key for the Kubernetes package repositories to the apt keyring
+    become: yes
+    ansible.builtin.shell: cat /root/kubernetes-release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+    when: not register_name.stat.exists
+
+  - name: Add the Kubernetes apt repository to apt sources
+    become: yes
+    ansible.builtin.lineinfile:
+      path: /etc/apt/sources.list.d/kubernetes.list
+      line: deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /
+      create: yes
+
+  - name: Install Kubernetes packages
+    become: yes
+    ansible.builtin.apt:
+      name: "{{ packages }}"
+      state: present
+      update_cache: yes
+    vars:
+      packages:
+        - kubelet
+        - kubeadm
+        - kubectl
+
+  - name: Hold kubelet package on current version
+    become: yes
+    ansible.builtin.dpkg_selections:
+      name:  kubelet
+      selection: hold
+
+  - name: Hold kubeadm package on current version
+    become: yes
+    ansible.builtin.dpkg_selections:
+      name:  kubeadm
+      selection: hold
+
+  - name: Hold kubectl package on current version
+    become: yes
+    ansible.builtin.dpkg_selections:
+      name:  kubectl
+      selection: hold

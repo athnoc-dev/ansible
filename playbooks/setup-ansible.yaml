@@ -1,0 +1,24 @@
+---
+# Pass the parameter --ask-become-pass on command line for a prompt for the root password
+
+- name: Setup sudo for Ansible user on remote host
+  hosts: all
+  gather_facts: no
+  become: yes
+  become_method: su
+  become_user: root
+  roles:
+    - ansible-common
+
+- name: Remove passwords from inventory file
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+
+  - name: Remove the passwords from the inventory file
+    ansible.builtin.replace:
+      path: ./inventory
+      regexp: 'ansible_password=.*'
+      replace: ''
+

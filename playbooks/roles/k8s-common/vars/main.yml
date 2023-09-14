@@ -1,0 +1,7 @@
+---
+# vars file for k8s-common
+
+# cri-o settings
+crio_version: 1.25
+crio_debian_version: Debian_12
+

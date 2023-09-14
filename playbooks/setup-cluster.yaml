@@ -1,0 +1,20 @@
+---
+
+- name: Configure Debian host and install Kubernetes dependencies
+  become: yes
+  hosts: all
+  roles:
+    - debian-common
+    - k8s-common
+
+- name: Configure Kubernetes master node
+  become: yes
+  hosts: master-nodes
+  roles:
+    - k8s-master
+
+- name: Join worker node to cluster
+  become: yes
+  hosts: master-nodes, worker-nodes
+  roles:
+    - k8s-worker

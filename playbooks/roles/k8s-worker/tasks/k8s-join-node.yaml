@@ -1,0 +1,21 @@
+# Join a K8s worker node to a cluster
+
+---
+
+    - name: Get Kubernetes token from master node
+      command: kubeadm token create
+      register: token
+      when: ansible_hostname == master_node
+
+    - name: Get Kubernetes token from master node
+      shell: openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
+      register: hash
+      when: ansible_hostname == master_node
+
+    - name: Gather facts on listening ports on master node
+      community.general.listen_ports_facts:
+      when: ansible_hostname == worker_node
+
+    - name: Join the worker node to the cluster
+      command: kubeadm join --token "{{ hostvars[vars['master_node']]['token']['stdout'] }}" "{{ hostvars[vars['master_node']]['ansible_default_ipv4']['address'] }}":6443 --discovery-token-ca-cert-hash sha256:"{{ hostvars[vars['master_node']]['hash']['stdout'] }}"
+      when: ansible_hostname == worker_node and 10250 not in (ansible_facts.tcp_listen | map(attribute='port')) and kubelet not in (ansible_facts.tcp_listen | map(attribute='name'))

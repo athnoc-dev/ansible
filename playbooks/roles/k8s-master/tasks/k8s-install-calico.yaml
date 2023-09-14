@@ -1,0 +1,28 @@
+#
+#
+# Pod networking - https://docs.tigera.io/calico/latest/getting-started/kubernetes/quickstart#install-calico
+# https://raw.githubusercontent.com/projectcalico/calico/master/manifests/tigera-operator.yaml
+# https://raw.githubusercontent.com/projectcalico/calico/master/manifests/custom-resources.yaml
+---
+
+  - name: Download Calico Operator
+    ansible.builtin.get_url:
+      url: https://raw.githubusercontent.com/projectcalico/calico/master/manifests/tigera-operator.yaml
+      dest: /root/tigera-operator.yaml
+
+  - name: Download Calico Custom Resources
+    ansible.builtin.get_url:
+      url: https://raw.githubusercontent.com/projectcalico/calico/master/manifests/custom-resources.yaml
+      dest: /root/custom-resources.yaml
+
+  - name: Apply Calico Operator
+    kubernetes.core.k8s:
+      kubeconfig: /etc/kubernetes/admin.conf
+      state: present
+      src: /root/tigera-operator.yaml
+
+  - name: Apply Calico Custom Resources
+    kubernetes.core.k8s:
+      kubeconfig: /etc/kubernetes/admin.conf
+      state: present
+      src: /root/custom-resources.yaml

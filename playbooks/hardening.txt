@@ -1,0 +1,5 @@
+https://www.redhat.com/sysadmin/ansible-vault-secure-playbooks
+https://docs.ansible.com/ansible/latest/collections/ansible/builtin/password_lookup.html
+https://docs.ansible.com/ansible/latest/collections/ansible/builtin/user_module.html#examples
+https://docs.ansible.com/ansible/latest/reference_appendices/faq.html#how-do-i-generate-encrypted-passwords-for-the-user-module
+https://docs.ansible.com/ansible/latest/collections/ansible/posix/authorized_key_module.html#examples

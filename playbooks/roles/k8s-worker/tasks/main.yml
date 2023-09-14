@@ -1,0 +1,4 @@
+---
+# tasks file for k8s-worker
+
+- include: k8s-join-node.yaml

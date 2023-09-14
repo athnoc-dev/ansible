@@ -1,0 +1,7 @@
+---
+# tasks file for k8s-common
+
+- include: debian-disable-swap.yaml
+- include: debian-k8s-init.yaml
+- include: debian-k8s-init-net.yaml
+- include: debian-install-cri-o.yaml

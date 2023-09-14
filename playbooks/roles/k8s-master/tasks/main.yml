@@ -1,0 +1,5 @@
+---
+# tasks file for k8s-master
+
+- include: k8s-kubeadm-bootstrap.yaml
+- include: k8s-install-calico.yaml

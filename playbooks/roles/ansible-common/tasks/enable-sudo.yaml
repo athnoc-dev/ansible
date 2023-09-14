@@ -1,0 +1,22 @@
+# These tasks will enable sudo and remove the USB / CDROM reference from apt sources
+
+---
+
+  - name: 'Remove the cdrom reference from apt sources.list'
+    lineinfile:
+      path: /etc/apt/sources.list
+      state: absent
+      regexp: 'cdrom'
+
+  - name: 'Update apt cache and install sudo'
+    apt:
+      update_cache: yes
+      name: sudo
+      state: present
+
+  - name: 'Add user to sudoers'
+    community.general.sudoers:
+      name: 'Add ansible user to sudoers'
+      state: present
+      user: '{{ ansible_user }}'
+      commands: ALL

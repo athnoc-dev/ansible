@@ -1,0 +1,29 @@
+---
+
+  - name: Harden sshd configuration
+    ansible.builtin.lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.line }}"
+      state: present
+#      validate: 'sshd -T -f %s'
+    with_items:
+      - regexp: "^PermitRootLogin"
+        line: "PermitRootLogin no"
+      - regexp: "^AllowUsers"
+        line: "AllowUsers ansible"
+      - regexp: "^PasswordAuthentication"
+        line: "PasswordAuthentication no"
+      - regexp: "^AllowAgentForwarding"
+        line: "AllowAgentForwarding no"
+      - regexp: "^AllowTcpForwarding"
+        line: "AllowTcpForwarding no"
+      - regexp: "^MaxAuthTries"
+        line: "MaxAuthTries 3"
+      - regexp: "^MaxSessions"
+        line: "MaxSessions 6"
+      - regexp: "^TCPKeepAlive"
+        line: "TCPKeepAlive no"
+      - regexp: "^UseDNS"
+        line: "UseDNS no"
+    notify: restart sshd

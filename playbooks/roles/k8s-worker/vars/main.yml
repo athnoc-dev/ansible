@@ -1,0 +1,5 @@
+---
+# vars file for k8s-worker
+
+master_node: 'k8s-master'
+worker_node: 'k8s-worker-01'

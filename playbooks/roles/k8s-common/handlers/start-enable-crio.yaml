@@ -1,0 +1,7 @@
+---
+
+  - name: Make sure cri-o service is started and enabled
+    ansible.builtin.systemd:
+      state: started
+      name: Start and enable crio service
+      enabled: yes

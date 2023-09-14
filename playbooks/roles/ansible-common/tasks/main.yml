@@ -1,0 +1,6 @@
+---
+# tasks file for ansible-common
+
+- include: enable-sudo.yaml
+- include: transfer-ssh-key.yaml
+#- include: ssh-hardening.yaml
